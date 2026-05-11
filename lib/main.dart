@@ -1,23 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'features/splash/splash_screen.dart'; // Apna splash screen import karein
+import 'package:flutter_dotenv/flutter_dotenv.dart'; // Dotenv import add kar diya
+import 'features/splash/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // ---- 1. SUPABASE INITIALIZATION ----
+  // ---- 1. LOAD ENVIRONMENT VARIABLES ----
+  // App start hone se pehle .env file ko load karega
+  await dotenv.load(fileName: ".env");
+
+  // ---- 2. SUPABASE INITIALIZATION (SECURED) ----
+  // Hardcoded keys ko dotenv calls se replace kar diya gaya hai
   await Supabase.initialize(
-    url: 'https://qhopruqddmnbiyzeezmt.supabase.co', 
-    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFob3BydXFkZG1uYml5emVlem10Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2NDQ1NTksImV4cCI6MjA5MzIyMDU1OX0.bQRNqb4G_knjwrG7De9zWRi4ABxW_OEaDDqgIV8sdHw', 
+    url: dotenv.env['SUPABASE_URL']!,
+    anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
   );
 
-  // ---- 2. RIVERPOD PROVIDER SCOPE ----
-  runApp(
-    const ProviderScope(
-      child: MyApp(),
-    ),
-  );
+  // ---- 3. RIVERPOD PROVIDER SCOPE ----
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {

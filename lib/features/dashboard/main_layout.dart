@@ -3,11 +3,11 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import 'home_screen.dart';
 import 'my_listings_screen.dart';
-import 'messages_screen.dart'; // Nayi Messages screen import kar li
+import 'messages_screen.dart';
 
 class MainLayout extends StatefulWidget {
-  final String role; 
-  
+  final String role;
+
   const MainLayout({super.key, required this.role});
 
   @override
@@ -16,16 +16,17 @@ class MainLayout extends StatefulWidget {
 
 class _MainLayoutState extends State<MainLayout> {
   int _currentIndex = 0;
-
   late final List<Widget> _screens;
 
   @override
   void initState() {
     super.initState();
     _screens = [
-      HomeScreen(role: widget.role),
+      HomeScreen(
+        role: widget.role,
+      ), // WARNING: Is file se BottomNavigationBar hata dena!
       MyListingsScreen(role: widget.role),
-      MessagesScreen(role: widget.role), // YAHAN TISRI SCREEN ADD HO GAYI!
+      MessagesScreen(role: widget.role),
       Center(child: Text('PROFILE', style: AppTextStyles.h3)),
     ];
   }
@@ -39,10 +40,12 @@ class _MainLayoutState extends State<MainLayout> {
         padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
         decoration: BoxDecoration(
           color: AppColors.white,
-          border: const Border(top: BorderSide(color: AppColors.gray200, width: 1)),
+          border: const Border(
+            top: BorderSide(color: AppColors.gray200, width: 1),
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05), // Warning fixed
               blurRadius: 6,
               offset: const Offset(0, -4),
             ),
@@ -52,18 +55,34 @@ class _MainLayoutState extends State<MainLayout> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             _buildNavItem(icon: Icons.home_filled, label: 'Home', index: 0),
-            _buildNavItem(icon: Icons.inventory_2_rounded, label: 'Listings', index: 1),
-            _buildNavItem(icon: Icons.chat_bubble_rounded, label: 'Messages', index: 2),
-            _buildNavItem(icon: Icons.person_rounded, label: 'Profile', index: 3),
+            _buildNavItem(
+              icon: Icons.inventory_2_rounded,
+              label: 'Listings',
+              index: 1,
+            ),
+            _buildNavItem(
+              icon: Icons.chat_bubble_rounded,
+              label: 'Messages',
+              index: 2,
+            ),
+            _buildNavItem(
+              icon: Icons.person_rounded,
+              label: 'Profile',
+              index: 3,
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildNavItem({required IconData icon, required String label, required int index}) {
+  Widget _buildNavItem({
+    required IconData icon,
+    required String label,
+    required int index,
+  }) {
     final isActive = _currentIndex == index;
-    
+
     return GestureDetector(
       onTap: () => setState(() => _currentIndex = index),
       behavior: HitTestBehavior.opaque,
@@ -84,7 +103,7 @@ class _MainLayoutState extends State<MainLayout> {
               size: 24,
               color: isActive ? AppColors.primary500 : AppColors.gray400,
             ),
-            const SizedBox(height: 4), 
+            const SizedBox(height: 4),
             Text(
               label,
               style: AppTextStyles.caption.copyWith(
