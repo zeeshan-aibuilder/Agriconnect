@@ -1,0 +1,95 @@
+2026/05/11-23:28:54.633 1b94 Reusing MANIFEST C:\Users\Zeeshan\OneDrive\Desktop\VScode\agriconnect\agriconnect-backend\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2026/05/11-23:28:54.634 1b94 Recovering log #241
+2026/05/11-23:28:54.733 1b94 Reusing old log C:\Users\Zeeshan\OneDrive\Desktop\VScode\agriconnect\agriconnect-backend\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/000241.log 
+2026/05/11-23:28:54.734 1b94 Delete type=2 #234
+2026/05/11-23:28:54.735 1b94 Delete type=2 #235
+2026/05/11-23:28:54.735 1b94 Delete type=2 #236
+2026/05/11-23:28:54.735 1b94 Delete type=2 #237
+2026/05/11-23:28:54.735 1b94 Delete type=2 #238
+2026/05/11-23:28:54.735 1b94 Delete type=2 #239
+2026/05/11-23:28:54.736 1b94 Delete type=2 #240
+2026/05/11-23:28:54.736 1b94 Delete type=2 #242
+2026/05/11-23:29:28.913 1514 Level-0 table #252: started
+2026/05/11-23:29:28.990 1514 Level-0 table #252: 1128141 bytes OK
+2026/05/11-23:29:28.993 1514 Delete type=0 #241
+2026/05/11-23:30:08.260 1514 Compacting 1@1 + 7@2 files
+2026/05/11-23:30:08.480 1514 Generated table #253@1: 43793 keys, 2192462 bytes
+2026/05/11-23:30:08.704 1514 Generated table #254@1: 100006 keys, 2251789 bytes
+2026/05/11-23:30:08.861 1514 Generated table #255@1: 43369 keys, 2205451 bytes
+2026/05/11-23:30:08.933 1514 Generated table #256@1: 1972 keys, 2148812 bytes
+2026/05/11-23:30:09.026 1514 Generated table #257@1: 10005 keys, 2180678 bytes
+2026/05/11-23:30:09.179 1514 Generated table #258@1: 25186 keys, 2244693 bytes
+2026/05/11-23:30:09.217 1514 Generated table #259@1: 8636 keys, 487946 bytes
+2026/05/11-23:30:09.217 1514 Compacted 1@1 + 7@2 files => 13711831 bytes
+2026/05/11-23:30:09.218 1514 compacted to: files[ 0 0 7 0 0 0 0 ]
+2026/05/11-23:30:09.219 1514 Delete type=2 #243
+2026/05/11-23:30:09.219 1514 Delete type=2 #244
+2026/05/11-23:30:09.219 1514 Delete type=2 #245
+2026/05/11-23:30:09.220 1514 Delete type=2 #246
+2026/05/11-23:30:09.220 1514 Delete type=2 #247
+2026/05/11-23:30:09.220 1514 Delete type=2 #248
+2026/05/11-23:30:09.220 1514 Delete type=2 #249
+2026/05/11-23:30:09.220 1514 Delete type=2 #252
+2026/05/11-23:31:58.323 1514 Level-0 table #261: started
+2026/05/11-23:31:58.393 1514 Level-0 table #261: 944954 bytes OK
+2026/05/11-23:31:58.397 1514 Delete type=0 #251
+2026/05/11-23:38:57.443 bd8 Compacting 1@1 + 6@2 files
+2026/05/11-23:38:57.620 bd8 Generated table #262@1: 41293 keys, 2188508 bytes
+2026/05/11-23:38:57.811 bd8 Generated table #263@1: 100667 keys, 2253053 bytes
+2026/05/11-23:38:58.168 bd8 Generated table #264@1: 44696 keys, 2207273 bytes
+2026/05/11-23:38:58.239 bd8 Generated table #265@1: 1977 keys, 2151166 bytes
+2026/05/11-23:38:58.335 bd8 Generated table #266@1: 9587 keys, 2177438 bytes
+2026/05/11-23:38:58.439 bd8 Generated table #267@1: 25177 keys, 2245771 bytes
+2026/05/11-23:38:58.446 bd8 Generated table #268@1: 445 keys, 41902 bytes
+2026/05/11-23:38:58.447 bd8 Compacted 1@1 + 6@2 files => 13265111 bytes
+2026/05/11-23:38:58.448 bd8 compacted to: files[ 0 0 8 0 0 0 0 ]
+2026/05/11-23:38:58.449 bd8 Delete type=2 #253
+2026/05/11-23:38:58.449 bd8 Delete type=2 #254
+2026/05/11-23:38:58.449 bd8 Delete type=2 #255
+2026/05/11-23:38:58.449 bd8 Delete type=2 #256
+2026/05/11-23:38:58.449 bd8 Delete type=2 #257
+2026/05/11-23:38:58.449 bd8 Delete type=2 #258
+2026/05/11-23:38:58.449 bd8 Delete type=2 #261
+2026/05/11-23:41:57.939 bd8 Level-0 table #270: started
+2026/05/11-23:41:57.997 bd8 Level-0 table #270: 818475 bytes OK
+2026/05/11-23:41:58.000 bd8 Delete type=0 #260
+2026/05/11-23:48:55.155 1514 Compacting 1@1 + 8@2 files
+2026/05/11-23:48:55.272 1514 Generated table #271@1: 43807 keys, 2194526 bytes
+2026/05/11-23:48:55.446 1514 Generated table #272@1: 100006 keys, 2251821 bytes
+2026/05/11-23:48:55.579 1514 Generated table #273@1: 43380 keys, 2202688 bytes
+2026/05/11-23:48:55.652 1514 Generated table #274@1: 1969 keys, 2150891 bytes
+2026/05/11-23:48:55.747 1514 Generated table #275@1: 9882 keys, 2179885 bytes
+2026/05/11-23:48:55.898 1514 Generated table #276@1: 25187 keys, 2246027 bytes
+2026/05/11-23:48:55.935 1514 Generated table #277@1: 8776 keys, 508500 bytes
+2026/05/11-23:48:55.936 1514 Compacted 1@1 + 8@2 files => 13734338 bytes
+2026/05/11-23:48:55.939 1514 compacted to: files[ 0 0 7 0 0 0 0 ]
+2026/05/11-23:48:55.940 1514 Delete type=2 #259
+2026/05/11-23:48:55.940 1514 Delete type=2 #262
+2026/05/11-23:48:55.940 1514 Delete type=2 #263
+2026/05/11-23:48:55.940 1514 Delete type=2 #264
+2026/05/11-23:48:55.940 1514 Delete type=2 #265
+2026/05/11-23:48:55.940 1514 Delete type=2 #266
+2026/05/11-23:48:55.940 1514 Delete type=2 #267
+2026/05/11-23:48:55.940 1514 Delete type=2 #268
+2026/05/11-23:48:55.941 1514 Delete type=2 #270
+2026/05/12-00:08:09.727 1b94 Level-0 table #279: started
+2026/05/12-00:08:09.791 1b94 Level-0 table #279: 954798 bytes OK
+2026/05/12-00:08:09.794 1b94 Delete type=0 #269
+2026/05/12-00:18:59.572 1b94 Compacting 1@1 + 7@2 files
+2026/05/12-00:18:59.730 1b94 Generated table #280@1: 42699 keys, 2192348 bytes
+2026/05/12-00:18:59.890 1b94 Generated table #281@1: 100107 keys, 2251698 bytes
+2026/05/12-00:18:59.991 1b94 Generated table #282@1: 43640 keys, 2203396 bytes
+2026/05/12-00:19:00.058 1b94 Generated table #283@1: 1972 keys, 2154787 bytes
+2026/05/12-00:19:00.114 1b94 Generated table #284@1: 9836 keys, 2179641 bytes
+2026/05/12-00:19:00.211 1b94 Generated table #285@1: 25167 keys, 2245405 bytes
+2026/05/12-00:19:00.240 1b94 Generated table #286@1: 8872 keys, 519803 bytes
+2026/05/12-00:19:00.240 1b94 Compacted 1@1 + 7@2 files => 13747078 bytes
+2026/05/12-00:19:00.242 1b94 compacted to: files[ 0 0 7 0 0 0 0 ]
+2026/05/12-00:19:00.242 1b94 Delete type=2 #271
+2026/05/12-00:19:00.243 1b94 Delete type=2 #272
+2026/05/12-00:19:00.243 1b94 Delete type=2 #273
+2026/05/12-00:19:00.243 1b94 Delete type=2 #274
+2026/05/12-00:19:00.243 1b94 Delete type=2 #275
+2026/05/12-00:19:00.243 1b94 Delete type=2 #276
+2026/05/12-00:19:00.243 1b94 Delete type=2 #277
+2026/05/12-00:19:00.243 1b94 Delete type=2 #279

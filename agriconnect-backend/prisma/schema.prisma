@@ -1,0 +1,72 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Role {
+  id        String   @id @default(uuid())
+  role_name String   @unique // 'Farmer', 'Buyer', 'Transporter', 'Admin'
+  users     User[]
+}
+
+model User {
+  id         String   @id @default(uuid())
+  phone      String   @unique
+  name       String?
+  role_id    String
+  role       Role     @relation(fields: [role_id], references: [id])
+  created_at DateTime @default(now())
+
+  // Relationships
+  listings          Listing[]
+  transportRequests TransportRequest[] // As a Requester
+  bids              TransportBid[]     // As a Transporter
+}
+
+model Listing {
+  id          String   @id @default(uuid())
+  farmer_id   String
+  farmer      User     @relation(fields: [farmer_id], references: [id])
+  title       String
+  description String
+  price       Float
+  images      String[]
+  status      String   @default("Active") // 'Active', 'Sold', 'Draft'
+  created_at  DateTime @default(now())
+
+  // Relationships
+  transportRequests TransportRequest[]
+}
+
+model TransportRequest {
+  id               String   @id @default(uuid())
+  listing_id       String
+  listing          Listing  @relation(fields: [listing_id], references: [id])
+  requester_id     String
+  requester        User     @relation(fields: [requester_id], references: [id])
+  pickup_location  String
+  dropoff_location String
+  status           String   @default("Pending") // 'Pending', 'Accepted', 'Completed', 'Cancelled'
+  created_at       DateTime @default(now())
+
+  // Relationships
+  bids TransportBid[]
+}
+
+model TransportBid {
+  id             String           @id @default(uuid())
+  request_id     String
+  request        TransportRequest @relation(fields: [request_id], references: [id])
+  transporter_id String
+  transporter    User             @relation(fields: [transporter_id], references: [id])
+  bid_amount     Float
+  status         String           @default("Pending") // 'Pending', 'Accepted', 'Rejected'
+  created_at     DateTime         @default(now())
+}
