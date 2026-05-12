@@ -1,18 +1,8 @@
 import 'package:flutter/material.dart';
-import 'dart:ui'; // For Glassmorphism blur effects
+import 'package:flutter/services.dart';
+import 'dart:ui';
 import '../../core/theme/app_colors.dart';
-import '../../core/theme/app_text_styles.dart';
-import 'login_screen.dart';
-
-// ==========================================
-// ULTRA-PREMIUM DESIGN TOKENS
-// ==========================================
-const Color _ink = Color(0xFF1E293B); 
-const Color _muted = Color(0xFF64748B);
-const Color _primaryGreen = Color(0xFF10B981); 
-const Color _accentOrange = Color(0xFFF59E0B);
-const Color _surfaceSoft = Color(0xFFF8FAFC); 
-const Color _hairline = Color(0xFFE2E8F0);
+import 'register_screen.dart'; // Directing to Register first!
 
 class RoleSelectionScreen extends StatefulWidget {
   const RoleSelectionScreen({super.key});
@@ -22,39 +12,57 @@ class RoleSelectionScreen extends StatefulWidget {
 }
 
 class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
-  String? selectedRole; // 'farmer' ya 'industry'
+  String? selectedRole;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.bgSecondary,
       body: Stack(
         children: [
-          // ---- 1. BACKGROUND GLOW EFFECTS (Apple/Microsoft Style) ----
+          // --- AMBIENT GLOW BACKGROUND ---
           Positioned(
-            top: -100, right: -50,
+            top: -100,
+            right: -50,
             child: Container(
-              width: 300, height: 300,
+              width: 300,
+              height: 300,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: _primaryGreen.withOpacity(0.05),
-                boxShadow: [BoxShadow(color: _primaryGreen.withOpacity(0.1), blurRadius: 100, spreadRadius: 50)],
+                color: AppColors.primary700.withValues(alpha: 0.15),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primary700.withValues(alpha: 0.2),
+                    blurRadius: 120,
+                    spreadRadius: 60,
+                  ),
+                ],
               ),
             ),
           ),
           Positioned(
-            bottom: -50, left: -50,
+            bottom: -50,
+            left: -50,
             child: Container(
-              width: 250, height: 250,
+              width: 250,
+              height: 250,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: _accentOrange.withOpacity(0.05),
-                boxShadow: [BoxShadow(color: _accentOrange.withOpacity(0.1), blurRadius: 100, spreadRadius: 50)],
+                color: const Color(
+                  0xFFF59E0B,
+                ).withValues(alpha: 0.1), // Amber Glow
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFFF59E0B).withValues(alpha: 0.15),
+                    blurRadius: 120,
+                    spreadRadius: 60,
+                  ),
+                ],
               ),
             ),
           ),
 
-          // ---- 2. MAIN CONTENT ----
+          // --- MAIN CONTENT ---
           SafeArea(
             child: CustomScrollView(
               physics: const BouncingScrollPhysics(),
@@ -62,56 +70,93 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                 SliverFillRemaining(
                   hasScrollBody: false,
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 32,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Logo or Brand Icon Area
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: _surfaceSoft,
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: _hairline),
+                        // Glassy Icon Container
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                            child: Container(
+                              padding: const EdgeInsets.all(14),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.6),
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: Colors.white.withValues(alpha: 0.8),
+                                  width: 1.5,
+                                ),
+                              ),
+                              child: const Icon(
+                                Icons.grass_rounded,
+                                color: AppColors.primary700,
+                                size: 32,
+                              ),
+                            ),
                           ),
-                          child: const Icon(Icons.grass_rounded, color: _primaryGreen, size: 32),
                         ),
                         const SizedBox(height: 32),
-                        
-                        // Hero Typography
+
                         const Text(
-                          'Choose Your Role', 
-                          style: TextStyle(fontSize: 36, fontWeight: FontWeight.w800, color: _ink, letterSpacing: -1, height: 1.1)
+                          'Choose Your Role',
+                          style: TextStyle(
+                            fontSize: 36,
+                            fontWeight: FontWeight.w900,
+                            color: AppColors.gray900,
+                            letterSpacing: -1,
+                            height: 1.1,
+                          ),
                         ),
                         const SizedBox(height: 12),
-                        Text(
-                          'Select how you want to use AgriConnect to tailor your experience.', 
-                          style: TextStyle(fontSize: 16, color: _muted, height: 1.5, fontWeight: FontWeight.w500)
+                        const Text(
+                          'Select how you want to use AgriConnect to tailor your premium experience.',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: AppColors.gray500,
+                            height: 1.5,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                        const SizedBox(height: 48),
-                        
-                        // Premium Interactive Role Cards
-                        _PremiumRoleCard(
-                          title: 'I am a Farmer',
-                          subtitle: 'Sell crops, buy machinery, and get market updates.',
+                        const SizedBox(height: 40),
+
+                        // Role Cards
+                        _GlassyRoleCard(
+                          title: 'I am a Supplier',
+                          subtitle: 'Farmers & Growers listing excess produce.',
                           icon: Icons.agriculture_rounded,
-                          color: _primaryGreen,
-                          isSelected: selectedRole == 'farmer',
-                          onTap: () => setState(() => selectedRole = 'farmer'),
+                          color: AppColors.primary700,
+                          isSelected: selectedRole == 'supplier',
+                          onTap: () =>
+                              setState(() => selectedRole = 'supplier'),
                         ),
-                        const SizedBox(height: 20),
-                        _PremiumRoleCard(
-                          title: 'I am an Industry Partner',
-                          subtitle: 'Procure bulk crops and contract with verified farmers.',
+                        const SizedBox(height: 16),
+                        _GlassyRoleCard(
+                          title: 'I am a B2B Buyer',
+                          subtitle: 'Factories & Mills posting bulk demands.',
                           icon: Icons.factory_rounded,
-                          color: _accentOrange,
-                          isSelected: selectedRole == 'industry',
-                          onTap: () => setState(() => selectedRole = 'industry'),
+                          color: const Color(0xFFF59E0B), // Amber
+                          isSelected: selectedRole == 'buyer',
+                          onTap: () => setState(() => selectedRole = 'buyer'),
                         ),
-                        
+                        const SizedBox(height: 16),
+                        _GlassyRoleCard(
+                          title: 'Logistics Partner',
+                          subtitle: 'Provide transport. (Phase 2 Feature)',
+                          icon: Icons.local_shipping_rounded,
+                          color: AppColors.gray400,
+                          isSelected: false,
+                          isComingSoon: true,
+                          onTap: () {}, // Disabled
+                        ),
+
                         const Spacer(),
                         const SizedBox(height: 32),
-                        
+
                         // Premium Continue Button
                         AnimatedContainer(
                           duration: const Duration(milliseconds: 300),
@@ -119,33 +164,68 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                           height: 60,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
-                            boxShadow: selectedRole != null 
-                                ? [BoxShadow(color: (selectedRole == 'farmer' ? _primaryGreen : _accentOrange).withOpacity(0.3), blurRadius: 20, offset: const Offset(0, 8))]
+                            boxShadow: selectedRole != null
+                                ? [
+                                    BoxShadow(
+                                      color:
+                                          (selectedRole == 'supplier'
+                                                  ? AppColors.primary700
+                                                  : const Color(0xFFF59E0B))
+                                              .withValues(alpha: 0.3),
+                                      blurRadius: 24,
+                                      offset: const Offset(0, 8),
+                                    ),
+                                  ]
                                 : [],
                           ),
                           child: ElevatedButton(
-                            onPressed: selectedRole == null 
-                                ? null 
+                            onPressed: selectedRole == null
+                                ? null
                                 : () {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen(role: selectedRole!)));
+                                    HapticFeedback.mediumImpact();
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const RegisterScreen(),
+                                      ),
+                                    );
                                   },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: selectedRole == 'farmer' ? _primaryGreen : (selectedRole == 'industry' ? _accentOrange : _surfaceSoft),
-                              disabledBackgroundColor: _surfaceSoft,
-                              foregroundColor: Colors.white,
-                              disabledForegroundColor: _muted,
+                              backgroundColor: selectedRole == 'supplier'
+                                  ? AppColors.primary700
+                                  : (selectedRole == 'buyer'
+                                        ? const Color(0xFFF59E0B)
+                                        : AppColors.gray300),
+                              disabledBackgroundColor: Colors.white.withValues(
+                                alpha: 0.5,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                               elevation: 0,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  'Continue', 
-                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, letterSpacing: -0.2, color: selectedRole == null ? _muted : Colors.white)
+                                  'Continue',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
+                                    color: selectedRole == null
+                                        ? AppColors.gray400
+                                        : Colors.white,
+                                  ),
                                 ),
                                 const SizedBox(width: 8),
-                                Icon(Icons.arrow_forward_rounded, size: 20, color: selectedRole == null ? _muted : Colors.white),
+                                Icon(
+                                  Icons.arrow_forward_rounded,
+                                  size: 20,
+                                  color: selectedRole == null
+                                      ? AppColors.gray400
+                                      : Colors.white,
+                                ),
                               ],
                             ),
                           ),
@@ -163,112 +243,144 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
   }
 }
 
-// ==========================================
-// UX: MICRO-INTERACTIVE ROLE CARD
-// ==========================================
-class _PremiumRoleCard extends StatelessWidget {
-  final String title;
-  final String subtitle;
+class _GlassyRoleCard extends StatelessWidget {
+  final String title, subtitle;
   final IconData icon;
   final Color color;
-  final bool isSelected;
+  final bool isSelected, isComingSoon;
   final VoidCallback onTap;
 
-  const _PremiumRoleCard({
+  const _GlassyRoleCard({
     required this.title,
     required this.subtitle,
     required this.icon,
     required this.color,
     required this.isSelected,
     required this.onTap,
+    this.isComingSoon = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 250),
-        curve: Curves.easeOutCubic,
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: isSelected ? color.withOpacity(0.05) : Colors.white,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(
-            color: isSelected ? color : _hairline,
-            width: isSelected ? 2 : 1,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(
+            sigmaX: isSelected ? 20 : 10,
+            sigmaY: isSelected ? 20 : 10,
           ),
-          boxShadow: [
-            if (isSelected) 
-              BoxShadow(color: color.withOpacity(0.15), blurRadius: 24, offset: const Offset(0, 8))
-            else 
-              BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4)),
-          ],
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Floating 3D-like Icon Box
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: isSelected 
-                      ? [color.withOpacity(0.2), color.withOpacity(0.05)]
-                      : [_surfaceSoft, Colors.white],
-                  begin: Alignment.topLeft, end: Alignment.bottomRight,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? color.withValues(alpha: 0.08)
+                  : Colors.white.withValues(alpha: 0.6),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: isSelected
+                    ? color.withValues(alpha: 0.5)
+                    : Colors.white.withValues(alpha: 0.8),
+                width: isSelected ? 2 : 1.5,
+              ),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: isComingSoon
+                        ? AppColors.gray200
+                        : color.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    icon,
+                    size: 28,
+                    color: isComingSoon ? AppColors.gray400 : color,
+                  ),
                 ),
-                shape: BoxShape.circle,
-                border: Border.all(color: isSelected ? color.withOpacity(0.5) : _hairline),
-              ),
-              child: Icon(icon, size: 32, color: isSelected ? color : _ink),
-            ),
-            const SizedBox(width: 20),
-            
-            // Text Content
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 4),
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: isSelected ? FontWeight.w800 : FontWeight.w700,
-                      color: _ink,
-                      letterSpacing: -0.3,
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            title,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w800,
+                              color: isComingSoon
+                                  ? AppColors.gray400
+                                  : AppColors.gray900,
+                            ),
+                          ),
+                          if (isComingSoon) ...[
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.gray200,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: const Text(
+                                'SOON',
+                                style: TextStyle(
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w800,
+                                  color: AppColors.gray500,
+                                  letterSpacing: 1,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        subtitle,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: isComingSoon
+                              ? AppColors.gray400
+                              : AppColors.gray500,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (isSelected)
+                  Container(
+                    width: 24,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: color,
+                      boxShadow: [
+                        BoxShadow(
+                          color: color.withValues(alpha: 0.4),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.check_rounded,
+                      size: 14,
+                      color: Colors.white,
                     ),
                   ),
-                  const SizedBox(height: 6),
-                  Text(
-                    subtitle,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: _muted,
-                      height: 1.4,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
+              ],
             ),
-            
-            // Selection Radio Indicator
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              margin: const EdgeInsets.only(top: 10),
-              width: 24, height: 24,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isSelected ? color : Colors.white,
-                border: Border.all(color: isSelected ? color : _hairline, width: 2),
-              ),
-              child: isSelected 
-                  ? const Icon(Icons.check_rounded, size: 14, color: Colors.white) 
-                  : null,
-            ),
-          ],
+          ),
         ),
       ),
     );

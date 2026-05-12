@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
 import 'dart:async'; 
 import '../../core/theme/app_colors.dart';
-import '../../core/theme/app_text_styles.dart';
 import 'add_listing_screen.dart';
 import 'listing_detail_screen.dart'; 
-import 'settings_screen.dart'; 
-import 'market_screen.dart'; 
-import 'messages_screen.dart'; 
 
 // ==========================================
 // PREMIUM DESIGN TOKENS (GREEN THEME)
 // ==========================================
 const Color _ink = Color(0xFF1E293B);
 const Color _muted = Color(0xFF64748B);
-const Color _primaryGreen = Color(0xFF10B981); // Emerald Green for Agriculture
+const Color _primaryGreen = Color(0xFF10B981);
 const Color _hairline = Color(0xFFE2E8F0);
 const Color _surfaceSoft = Color(0xFFF1F5F9); 
 
@@ -26,102 +22,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _currentIndex = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    final List<Widget> pages = [
-      _HomeView(role: widget.role),           
-      MarketScreen(role: widget.role),        
-      MessagesScreen(role: widget.role),      
-      const SettingsScreen(),                
-    ];
-
-    return Scaffold(
-      backgroundColor: _surfaceSoft,
-      body: IndexedStack(index: _currentIndex, children: pages),
-
-      floatingActionButton: Container(
-        height: 56, width: 56,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          boxShadow: [BoxShadow(color: _primaryGreen.withOpacity(0.4), blurRadius: 12, offset: const Offset(0, 6))],
-        ),
-        child: FloatingActionButton(
-          heroTag: null, 
-          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => AddListingScreen(role: widget.role))),
-          backgroundColor: _primaryGreen,
-          elevation: 0, 
-          shape: const CircleBorder(),
-          child: const Icon(Icons.add_rounded, size: 30, color: Colors.white),
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-
-      bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-          border: Border(top: BorderSide(color: _hairline, width: 1)),
-          color: Colors.white,
-        ),
-        child: SafeArea( 
-          child: BottomAppBar(
-            shape: const CircularNotchedRectangle(),
-            notchMargin: 8,
-            color: Colors.transparent, 
-            elevation: 0, 
-            padding: const EdgeInsets.symmetric(vertical: 4), 
-            height: 72, 
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildNavItem(Icons.home_filled, Icons.home_outlined, "Home", 0),
-                _buildNavItem(Icons.storefront_rounded, Icons.storefront_outlined, "Market", 1),
-                const SizedBox(width: 48), 
-                _buildNavItem(Icons.chat_bubble_rounded, Icons.chat_bubble_outline_rounded, "Chats", 2),
-                _buildNavItem(Icons.person_rounded, Icons.person_outline_rounded, "Profile", 3), 
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNavItem(IconData filledIcon, IconData outlineIcon, String label, int index) {
-    final isSelected = _currentIndex == index;
-    return InkWell(
-      onTap: () => setState(() => _currentIndex = index),
-      borderRadius: BorderRadius.circular(12),
-      splashColor: _surfaceSoft,
-      highlightColor: Colors.transparent,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4), 
-        child: Column(
-          mainAxisSize: MainAxisSize.min, 
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(isSelected ? filledIcon : outlineIcon, color: isSelected ? _primaryGreen : _muted, size: 24),
-            const SizedBox(height: 4),
-            Text(label, style: TextStyle(fontSize: 10, fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500, color: isSelected ? _ink : _muted)),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// ==========================================
-// ULTRA-PREMIUM HOME VIEW
-// ==========================================
-class _HomeView extends StatefulWidget {
-  final String role;
-  const _HomeView({required this.role});
-
-  @override
-  State<_HomeView> createState() => _HomeViewState();
-}
-
-class _HomeViewState extends State<_HomeView> {
   final PageController _promoController = PageController(viewportFraction: 0.92);
   int _currentPromoIndex = 0;
   Timer? _promoTimer;
@@ -171,190 +71,210 @@ class _HomeViewState extends State<_HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    final isFarmer = widget.role == 'farmer';
+    final isFarmer = widget.role == 'supplier' || widget.role == 'producer';
 
-    return RefreshIndicator(
-      onRefresh: () async { await Future.delayed(const Duration(seconds: 1)); setState((){}); },
-      color: _primaryGreen,
-      backgroundColor: Colors.white,
-      child: SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SafeArea(
-              bottom: false,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 32, 24, 20),
+    return Scaffold(
+      backgroundColor: _surfaceSoft,
+      // Sirf Floating Action Button rakha hai
+      floatingActionButton: Container(
+        height: 56, width: 56,
+        margin: const EdgeInsets.only(bottom: 16, right: 8),
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          boxShadow: [BoxShadow(color: _primaryGreen.withOpacity(0.4), blurRadius: 12, offset: const Offset(0, 6))],
+        ),
+        child: FloatingActionButton(
+          heroTag: 'home_fab', 
+          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => AddListingScreen(role: widget.role))),
+          backgroundColor: _primaryGreen,
+          elevation: 0, 
+          shape: const CircleBorder(),
+          child: const Icon(Icons.add_rounded, size: 30, color: Colors.white),
+        ),
+      ),
+      body: RefreshIndicator(
+        onRefresh: () async { await Future.delayed(const Duration(seconds: 1)); setState((){}); },
+        color: _primaryGreen,
+        backgroundColor: Colors.white,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SafeArea(
+                bottom: false,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 32, 24, 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(_getGreeting(), style: const TextStyle(color: _muted, fontSize: 14, fontWeight: FontWeight.w500)),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                Flexible(child: Text(isFarmer ? 'Kisan Bhai' : 'Industry Partner', style: const TextStyle(color: _ink, fontSize: 26, fontWeight: FontWeight.w700, letterSpacing: -0.5), maxLines: 1, overflow: TextOverflow.ellipsis)),
+                                const SizedBox(width: 8),
+                                Text(isFarmer ? '🌾' : '🏭', style: const TextStyle(fontSize: 22)),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Container(
+                        height: 48, width: 48,
+                        decoration: BoxDecoration(
+                          color: Colors.white, 
+                          shape: BoxShape.circle, 
+                          border: Border.all(color: _hairline),
+                          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8, offset: const Offset(0, 4))],
+                        ),
+                        child: IconButton(
+                          icon: const Icon(Icons.notifications_none_rounded, color: _ink),
+                          onPressed: () {}, 
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(_getGreeting(), style: const TextStyle(color: _muted, fontSize: 14, fontWeight: FontWeight.w500)),
-                          const SizedBox(height: 4),
-                          Row(
-                            children: [
-                              Flexible(child: Text(isFarmer ? 'Kisan Bhai' : 'Industry Partner', style: const TextStyle(color: _ink, fontSize: 26, fontWeight: FontWeight.w700, letterSpacing: -0.5), maxLines: 1, overflow: TextOverflow.ellipsis)),
-                              const SizedBox(width: 8),
-                              Text(isFarmer ? '🌾' : '🏭', style: const TextStyle(fontSize: 22)),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
+                    Expanded(child: _StatCard(title: isFarmer ? 'Active Listings' : 'Demands', value: '12', icon: Icons.auto_graph_rounded, color: _primaryGreen)),
                     const SizedBox(width: 16),
-                    Container(
-                      height: 48, width: 48,
-                      decoration: BoxDecoration(
-                        color: Colors.white, 
-                        shape: BoxShape.circle, 
-                        border: Border.all(color: _hairline),
-                        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8, offset: const Offset(0, 4))],
-                      ),
-                      child: IconButton(
-                        icon: const Icon(Icons.notifications_none_rounded, color: _ink),
-                        onPressed: () {}, 
-                      ),
-                    )
+                    Expanded(child: _StatCard(title: 'Pending Deals', value: '3', icon: Icons.timer_outlined, color: const Color(0xFFF59E0B))),
                   ],
                 ),
               ),
-            ),
+              const SizedBox(height: 32),
 
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-              child: Row(
-                children: [
-                  Expanded(child: _StatCard(title: isFarmer ? 'Active Listings' : 'Demands', value: '12', icon: Icons.auto_graph_rounded, color: _primaryGreen)),
-                  const SizedBox(width: 16),
-                  Expanded(child: _StatCard(title: 'Pending Deals', value: '3', icon: Icons.timer_outlined, color: const Color(0xFFF59E0B))),
-                ],
-              ),
-            ),
-            const SizedBox(height: 32),
-
-            SizedBox(
-              height: 170, 
-              child: PageView.builder(
-                controller: _promoController,
-                physics: const BouncingScrollPhysics(),
-                onPageChanged: (int index) => setState(() => _currentPromoIndex = index),
-                itemCount: _promos.length,
-                itemBuilder: (context, index) {
-                  final promo = _promos[index];
-                  return _buildPromoBanner(title: promo['title'], subtitle: promo['subtitle'], color1: promo['color1'], color2: promo['color2'], icon: promo['icon'], isAd: promo['isAd']);
-                },
-              ),
-            ),
-            const SizedBox(height: 16),
-            
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(
-                _promos.length,
-                (index) => AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  width: _currentPromoIndex == index ? 24 : 6,
-                  height: 6,
-                  decoration: BoxDecoration(color: _currentPromoIndex == index ? _ink : _hairline, borderRadius: BorderRadius.circular(4)),
+              SizedBox(
+                height: 170, 
+                child: PageView.builder(
+                  controller: _promoController,
+                  physics: const BouncingScrollPhysics(),
+                  onPageChanged: (int index) => setState(() => _currentPromoIndex = index),
+                  itemCount: _promos.length,
+                  itemBuilder: (context, index) {
+                    final promo = _promos[index];
+                    return _buildPromoBanner(title: promo['title'], subtitle: promo['subtitle'], color1: promo['color1'], color2: promo['color2'], icon: promo['icon'], isAd: promo['isAd']);
+                  },
                 ),
               ),
-            ),
-            const SizedBox(height: 48),
+              const SizedBox(height: 16),
+              
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(
+                  _promos.length,
+                  (index) => AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    margin: const EdgeInsets.symmetric(horizontal: 4),
+                    width: _currentPromoIndex == index ? 24 : 6,
+                    height: 6,
+                    decoration: BoxDecoration(color: _currentPromoIndex == index ? _ink : _hairline, borderRadius: BorderRadius.circular(4)),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 48),
 
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24),
-              child: Text('Market trends', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: _ink, letterSpacing: -0.44)),
-            ),
-            const SizedBox(height: 16),
-            
-            SizedBox(
-              height: 36,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                itemCount: _graphCrops.length,
-                itemBuilder: (context, index) {
-                  final crop = _graphCrops[index];
-                  final isSelected = _selectedGraphCrop == crop;
-                  
-                  return GestureDetector(
-                    onTap: () => setState(() => _selectedGraphCrop = crop),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      margin: const EdgeInsets.only(right: 8),
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      decoration: BoxDecoration(
-                        color: isSelected ? _ink : Colors.white,
-                        borderRadius: BorderRadius.circular(999), 
-                        border: Border.all(color: isSelected ? _ink : _hairline, width: 1),
-                        boxShadow: isSelected ? [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 4, offset: const Offset(0, 2))] : [],
-                      ),
-                      child: Center(
-                        child: Text(
-                          crop,
-                          style: TextStyle(color: isSelected ? Colors.white : _ink, fontSize: 13, fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24),
+                child: Text('Market trends', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: _ink, letterSpacing: -0.44)),
+              ),
+              const SizedBox(height: 16),
+              
+              SizedBox(
+                height: 36,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  physics: const BouncingScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  itemCount: _graphCrops.length,
+                  itemBuilder: (context, index) {
+                    final crop = _graphCrops[index];
+                    final isSelected = _selectedGraphCrop == crop;
+                    
+                    return GestureDetector(
+                      onTap: () => setState(() => _selectedGraphCrop = crop),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        margin: const EdgeInsets.only(right: 8),
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        decoration: BoxDecoration(
+                          color: isSelected ? _ink : Colors.white,
+                          borderRadius: BorderRadius.circular(999), 
+                          border: Border.all(color: isSelected ? _ink : _hairline, width: 1),
+                          boxShadow: isSelected ? [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 4, offset: const Offset(0, 2))] : [],
+                        ),
+                        child: Center(
+                          child: Text(
+                            crop,
+                            style: TextStyle(color: isSelected ? Colors.white : _ink, fontSize: 13, fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500),
+                          ),
                         ),
                       ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 24),
+              _buildDynamicMandiGraph(), 
+              const SizedBox(height: 48),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Recent activity', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: _ink, letterSpacing: -0.44)),
+                        Text('Show all', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: _primaryGreen)),
+                      ],
                     ),
-                  );
-                },
+                    const SizedBox(height: 16),
+                    
+                    _buildRichActivityCard(
+                      title: isFarmer ? 'Premium Basmati Rice' : 'Require: Basmati 100T', 
+                      time: '2 hours ago', 
+                      status: 'Pending Approval',
+                      statusColor: const Color(0xFFF59E0B),
+                      icon: isFarmer ? Icons.eco_rounded : Icons.factory_rounded, 
+                      isFarmer: isFarmer, 
+                      context: context
+                    ),
+                    _buildRichActivityCard(
+                      title: isFarmer ? 'Organic Wheat' : 'Require: Grade A Wheat', 
+                      time: 'Yesterday', 
+                      status: 'Deal Closed',
+                      statusColor: _primaryGreen,
+                      icon: Icons.grass_rounded, 
+                      isFarmer: isFarmer, 
+                      context: context, 
+                      isClosed: true
+                    ),
+                    const SizedBox(height: 110), 
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 24),
-            _buildDynamicMandiGraph(), 
-            const SizedBox(height: 48),
-
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Recent activity', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: _ink, letterSpacing: -0.44)),
-                      Text('Show all', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: _primaryGreen)),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  _buildRichActivityCard(
-                    title: isFarmer ? 'Premium Basmati Rice' : 'Require: Basmati 100T', 
-                    time: '2 hours ago', 
-                    status: 'Pending Approval',
-                    statusColor: const Color(0xFFF59E0B),
-                    icon: isFarmer ? Icons.eco_rounded : Icons.factory_rounded, 
-                    isFarmer: isFarmer, 
-                    context: context
-                  ),
-                  _buildRichActivityCard(
-                    title: isFarmer ? 'Organic Wheat' : 'Require: Grade A Wheat', 
-                    time: 'Yesterday', 
-                    status: 'Deal Closed',
-                    statusColor: _primaryGreen,
-                    icon: Icons.grass_rounded, 
-                    isFarmer: isFarmer, 
-                    context: context, 
-                    isClosed: true
-                  ),
-
-                  const SizedBox(height: 110), 
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
+  // --- Graph & Cards helper methods (Same as you provided) ---
   Widget _buildDynamicMandiGraph() {
     final cropData = _mandiGraphData[_selectedGraphCrop]!;
     final bool isUp = cropData['isUp'];
