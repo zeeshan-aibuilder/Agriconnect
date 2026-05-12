@@ -3,11 +3,11 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import 'home_screen.dart';
 import 'my_listings_screen.dart';
-import 'messages_screen.dart';
+import '../chat/messages_screen.dart';
+import '../dashboard/user_profile_screen.dart'; // 🔥 Profile Import
 
 class MainLayout extends StatefulWidget {
   final String role;
-
   const MainLayout({super.key, required this.role});
 
   @override
@@ -22,12 +22,11 @@ class _MainLayoutState extends State<MainLayout> {
   void initState() {
     super.initState();
     _screens = [
-      HomeScreen(
-        role: widget.role,
-      ), // WARNING: Is file se BottomNavigationBar hata dena!
+      HomeScreen(role: widget.role),
       MyListingsScreen(role: widget.role),
       MessagesScreen(role: widget.role),
-      Center(child: Text('PROFILE', style: AppTextStyles.h3)),
+      // 🔥 Profile Screen Connected
+      const UserProfileScreen(userName: 'Muhammad Zeeshan'),
     ];
   }
 
@@ -45,7 +44,7 @@ class _MainLayoutState extends State<MainLayout> {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05), // Warning fixed
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 6,
               offset: const Offset(0, -4),
             ),
@@ -91,7 +90,9 @@ class _MainLayoutState extends State<MainLayout> {
         width: 60,
         padding: const EdgeInsets.symmetric(vertical: 4),
         decoration: BoxDecoration(
-          color: isActive ? const Color(0xFFF0F9F4) : Colors.transparent,
+          color: isActive
+              ? AppColors.primary700.withValues(alpha: 0.1)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
@@ -101,14 +102,14 @@ class _MainLayoutState extends State<MainLayout> {
             Icon(
               icon,
               size: 24,
-              color: isActive ? AppColors.primary500 : AppColors.gray400,
+              color: isActive ? AppColors.primary700 : AppColors.gray400,
             ),
             const SizedBox(height: 4),
             Text(
               label,
               style: AppTextStyles.caption.copyWith(
-                fontWeight: FontWeight.w500,
-                color: isActive ? AppColors.primary500 : AppColors.gray400,
+                fontWeight: FontWeight.w600,
+                color: isActive ? AppColors.primary700 : AppColors.gray400,
               ),
             ),
           ],

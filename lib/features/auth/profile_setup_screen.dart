@@ -24,34 +24,50 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
         const SnackBar(
           content: Text('Your Name is required!'),
           backgroundColor: AppColors.error500,
+          behavior: SnackBarBehavior.floating,
         ),
       );
       return;
     }
 
     setState(() => _isLoading = true);
-    await Future.delayed(const Duration(seconds: 2)); // Mock API
+    HapticFeedback.lightImpact();
+
+    await Future.delayed(const Duration(seconds: 2)); // Mock API Upload
 
     if (mounted) {
       setState(() => _isLoading = false);
-      HapticFeedback.mediumImpact();
+      HapticFeedback.heavyImpact();
 
-      // Auto-Login Feedback
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Account Created! Logging you in...'),
-          backgroundColor: AppColors.success500,
-          duration: Duration(seconds: 2),
-        ),
+      // 🌟 ULTRA-PREMIUM SUCCESS FEEDBACK
+      showDialog(
+        context: context,
+        barrierColor: Colors.black.withValues(alpha: 0.6),
+        barrierDismissible: false,
+        builder: (context) => const _PremiumSuccessDialog(),
       );
 
-      // DIRECT JUMP TO DASHBOARD (Auto-Login)
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => MainLayout(role: widget.role)),
-        (route) => false,
-      );
+      // 1.5 Seconds ka delay taake user success animation dekh sake
+      await Future.delayed(const Duration(milliseconds: 1500));
+
+      if (mounted) {
+        // DIRECT JUMP TO DASHBOARD (Auto-Login)
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MainLayout(role: widget.role),
+          ),
+          (route) => false,
+        );
+      }
     }
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _businessController.dispose();
+    super.dispose();
   }
 
   @override
@@ -62,6 +78,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
         backgroundColor: AppColors.bgSecondary,
         body: Stack(
           children: [
+            // AMBIENT GLOW BACKGROUND
             Positioned(
               top: -100,
               left: -50,
@@ -121,6 +138,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                     ),
                     const SizedBox(height: 32),
 
+                    // GLASSMORPHISM FORM
                     ClipRRect(
                       borderRadius: BorderRadius.circular(24),
                       child: BackdropFilter(
@@ -136,14 +154,14 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                             children: [
                               _buildGlassyInput(
                                 "Full Name / Contact Person",
-                                "John Doe",
+                                "E.g. John Doe",
                                 _nameController,
                                 Icons.person_outline,
                               ),
                               const SizedBox(height: 20),
                               _buildGlassyInput(
                                 "Business / Farm Name",
-                                "Green Valley Farms",
+                                "E.g. Green Valley Farms",
                                 _businessController,
                                 Icons.business_outlined,
                               ),
@@ -154,9 +172,24 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                     ),
                     const SizedBox(height: 40),
 
-                    SizedBox(
+                    // PRIMARY BUTTON
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
                       width: double.infinity,
                       height: 60,
+                      decoration: BoxDecoration(
+                        boxShadow: _isLoading
+                            ? []
+                            : [
+                                BoxShadow(
+                                  color: AppColors.primary700.withValues(
+                                    alpha: 0.3,
+                                  ),
+                                  blurRadius: 20,
+                                  offset: const Offset(0, 8),
+                                ),
+                              ],
+                      ),
                       child: ElevatedButton(
                         onPressed: _completeProfile,
                         style: ElevatedButton.styleFrom(
@@ -227,6 +260,74 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
           ),
         ),
       ],
+    );
+  }
+}
+
+// ==========================================
+// PREMIUM SUCCESS DIALOG (AUTO-LOGIN FEEDBACK)
+// ==========================================
+class _PremiumSuccessDialog extends StatelessWidget {
+  const _PremiumSuccessDialog();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Material(
+        color: Colors.transparent,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(32),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            child: Container(
+              width: 280,
+              padding: const EdgeInsets.all(32),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.9),
+                borderRadius: BorderRadius.circular(32),
+                border: Border.all(color: Colors.white, width: 2),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: AppColors.success500.withValues(alpha: 0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.check_circle_rounded,
+                      color: AppColors.success500,
+                      size: 48,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  const Text(
+                    "Success!",
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.gray900,
+                      letterSpacing: -0.5,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    "Logging you into your workspace...",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: AppColors.gray500,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
