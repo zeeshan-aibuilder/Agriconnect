@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/theme/app_colors.dart';
 import '../dashboard/main_layout.dart';
-import 'register_screen.dart';
+import 'role_selection_screen.dart'; // 🔥 IMPORT ROLE SELECTION
 import 'forgot_password_screen.dart';
-import 'widgets/auth_widgets.dart'; // Import Reusable Widgets
+import 'widgets/auth_widgets.dart';
 
 class LoginScreen extends StatefulWidget {
   final String? role;
@@ -70,13 +71,21 @@ class _LoginScreenState extends State<LoginScreen> {
     await Future.delayed(const Duration(seconds: 2));
 
     if (mounted) {
+      final prefs = await SharedPreferences.getInstance();
+      String currentRole = widget.role ?? prefs.getString('user_role') ?? 'supplier';
+      
+      await prefs.setBool('is_logged_in', true);
+      await prefs.setString('user_role', currentRole);
+
       setState(() => _isLoading = false);
       HapticFeedback.heavyImpact();
-      Navigator.pushReplacement(
+
+      Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
-          builder: (context) => MainLayout(role: widget.role ?? 'supplier'),
+          builder: (context) => MainLayout(role: currentRole),
         ),
+        (Route<dynamic> route) => false,
       );
     }
   }
@@ -84,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return IgnorePointer(
-      ignoring: _isLoading, // Locks entire UI when loading
+      ignoring: _isLoading,
       child: Scaffold(
         backgroundColor: AppColors.bgSecondary,
         body: SafeArea(
@@ -100,118 +109,53 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 40),
                 const Text(
                   "Welcome Back!",
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.w900,
-                    color: AppColors.gray900,
-                    letterSpacing: -0.5,
-                  ),
+                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.w900, color: AppColors.gray900, letterSpacing: -0.5),
                 ),
                 const SizedBox(height: 8),
                 const Text(
                   "Login to access your B2B dashboard.",
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: AppColors.gray500,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: TextStyle(fontSize: 15, color: AppColors.gray500, fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(height: 40),
 
                 AppTextField(
-                  label: "Mobile Number",
-                  hint: "300 1234567",
-                  controller: _phoneController,
-                  focusNode: _phoneFocus,
-                  keyboardType: TextInputType.phone,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    LengthLimitingTextInputFormatter(10),
-                  ],
+                  label: "Mobile Number", hint: "300 1234567", controller: _phoneController, focusNode: _phoneFocus, keyboardType: TextInputType.phone,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(10)],
                   prefixIcon: const Padding(
                     padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                    child: Text(
-                      "🇵🇰 +92",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.gray900,
-                      ),
-                    ),
+                    child: Text("🇵🇰 +92", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.gray900)),
                   ),
-                  errorText: _phoneError,
-                  onClear: () => _phoneController.clear(),
+                  errorText: _phoneError, onClear: () => _phoneController.clear(),
                 ),
                 const SizedBox(height: 24),
 
                 AppTextField(
-                  label: "Password",
-                  hint: "Enter your password",
-                  controller: _passController,
-                  focusNode: _passFocus,
-                  isPassword: true,
-                  obscureText: _obscurePassword,
-                  prefixIcon: const Icon(
-                    Icons.lock_outline,
-                    color: AppColors.gray500,
-                  ),
-                  errorText: _passError,
-                  onToggleVisibility: () =>
-                      setState(() => _obscurePassword = !_obscurePassword),
+                  label: "Password", hint: "Enter your password", controller: _passController, focusNode: _passFocus, isPassword: true, obscureText: _obscurePassword,
+                  prefixIcon: const Icon(Icons.lock_outline, color: AppColors.gray500), errorText: _passError,
+                  onToggleVisibility: () => setState(() => _obscurePassword = !_obscurePassword),
                   onSubmitted: (_) => _validateAndLogin(),
                 ),
 
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
-                    onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ForgotPasswordScreen(),
-                      ),
-                    ),
-                    child: const Text(
-                      "Forgot Password?",
-                      style: TextStyle(
-                        color: AppColors.primary700,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ForgotPasswordScreen())),
+                    child: const Text("Forgot Password?", style: TextStyle(color: AppColors.primary700, fontWeight: FontWeight.w600)),
                   ),
                 ),
                 const SizedBox(height: 24),
 
-                PrimaryButton(
-                  text: "Continue",
-                  isLoading: _isLoading,
-                  onPressed: _validateAndLogin,
-                ),
+                PrimaryButton(text: "Continue", isLoading: _isLoading, onPressed: _validateAndLogin),
                 const SizedBox(height: 24),
 
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
-                      "New to AgriConnect?",
-                      style: TextStyle(
-                        color: AppColors.gray500,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+                    const Text("New to AgriConnect?", style: TextStyle(color: AppColors.gray500, fontWeight: FontWeight.w500)),
                     TextButton(
-                      onPressed: () => Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const RegisterScreen(),
-                        ),
-                      ),
-                      child: const Text(
-                        "Register",
-                        style: TextStyle(
-                          color: AppColors.primary700,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
+                      // 🔥 SENIOR FIX: Route back to Role Selection first instead of RegisterScreen directly
+                      onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const RoleSelectionScreen())),
+                      child: const Text("Register", style: TextStyle(color: AppColors.primary700, fontWeight: FontWeight.w700)),
                     ),
                   ],
                 ),

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // 🔥 IMPORT ADDED
 import '../../core/theme/app_colors.dart';
 import 'otp_verification_screen.dart';
 import 'login_screen.dart';
 import 'widgets/auth_widgets.dart';
 
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
+  final String role; // 🔥 SENIOR FIX: Receiving the role
+  const RegisterScreen({super.key, required this.role});
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -84,19 +86,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     await Future.delayed(const Duration(seconds: 1)); // Mock API delay
 
-    if (mounted) {
-      setState(() => _isLoading = false);
-      HapticFeedback.mediumImpact();
+    if (!mounted) return;
 
-      // Navigate to OTP, passing isRegister = true
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) =>
-              OtpVerificationScreen(phoneNumber: '0$phone', isRegister: true),
-        ),
-      );
-    }
+    // 🚀 SENIOR LOGIC: Save the user's role to device memory securely!
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('user_role', widget.role);
+
+    setState(() => _isLoading = false);
+    HapticFeedback.mediumImpact();
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            OtpVerificationScreen(phoneNumber: '0$phone', isRegister: true),
+      ),
+    );
   }
 
   @override

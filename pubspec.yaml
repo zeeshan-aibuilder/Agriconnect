@@ -11,6 +11,9 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_dotenv: ^6.0.1
+# ---- MAPS & GPS ----
+  flutter_map: ^8.3.0
+  latlong2: ^0.9.1
 
   # ---- APP UI & STATE PACKAGES ----
   flutter_riverpod: ^3.3.1
@@ -24,23 +27,38 @@ dependencies:
   permission_handler: ^11.3.0
   image_picker: ^1.2.2
   file_picker: ^11.0.2
-  geolocator: ^11.0.0
+  geolocator: ^14.0.2
   flutter_contacts: ^1.1.9
   record: ^6.2.0
   path_provider: ^2.1.2
   supabase_flutter: ^2.10.2
   dio: ^5.9.2
+  web_socket_channel: ^3.0.3
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  flutter_native_splash: ^2.4.0 
+  flutter_launcher_icons: ^0.13.1
+
+# 🔥 FIXED: Moved to ROOT level (No spaces before flutter_icons)
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/logo.png"
+  min_sdk_android: 21
 
 flutter:
   uses-material-design: true
-  
-  # Ye line dotenv file aur images ko app mein read karne ke liye lazmi hai
   assets:
     - .env
     - assets/images/logo.png
     - assets/images/adlytix_logo.png
+
+flutter_native_splash:
+  color: "#F8FAFC"
+  image: assets/images/logo.png
+  android_12:
+    color: "#F8FAFC"
+    image: assets/images/logo.png

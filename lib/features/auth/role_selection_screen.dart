@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:ui';
 import '../../core/theme/app_colors.dart';
-import 'register_screen.dart'; // Directing to Register first!
+import 'register_screen.dart';
 
 class RoleSelectionScreen extends StatefulWidget {
   const RoleSelectionScreen({super.key});
@@ -20,21 +20,21 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
       backgroundColor: AppColors.bgSecondary,
       body: Stack(
         children: [
-          // --- AMBIENT GLOW BACKGROUND ---
+          // --- PRECISE AMBIENT GLOW BACKGROUND ---
           Positioned(
-            top: -100,
-            right: -50,
+            top: -50,
+            right: -100,
             child: Container(
-              width: 300,
-              height: 300,
+              width: 350,
+              height: 350,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppColors.primary700.withValues(alpha: 0.15),
+                color: const Color(0xFFC7D2FE).withValues(alpha: 0.4),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.primary700.withValues(alpha: 0.2),
-                    blurRadius: 120,
-                    spreadRadius: 60,
+                    color: const Color(0xFFC7D2FE).withValues(alpha: 0.2),
+                    blurRadius: 100,
+                    spreadRadius: 50,
                   ),
                 ],
               ),
@@ -42,20 +42,18 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
           ),
           Positioned(
             bottom: -50,
-            left: -50,
+            left: -100,
             child: Container(
-              width: 250,
-              height: 250,
+              width: 300,
+              height: 300,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: const Color(
-                  0xFFF59E0B,
-                ).withValues(alpha: 0.1), // Amber Glow
+                color: const Color(0xFFFDE68A).withValues(alpha: 0.3),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFFF59E0B).withValues(alpha: 0.15),
-                    blurRadius: 120,
-                    spreadRadius: 60,
+                    color: const Color(0xFFFDE68A).withValues(alpha: 0.15),
+                    blurRadius: 100,
+                    spreadRadius: 50,
                   ),
                 ],
               ),
@@ -77,7 +75,6 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Glassy Icon Container
                         ClipRRect(
                           borderRadius: BorderRadius.circular(20),
                           child: BackdropFilter(
@@ -85,23 +82,22 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                             child: Container(
                               padding: const EdgeInsets.all(14),
                               decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.6),
+                                color: Colors.white.withValues(alpha: 0.8),
                                 borderRadius: BorderRadius.circular(20),
                                 border: Border.all(
-                                  color: Colors.white.withValues(alpha: 0.8),
-                                  width: 1.5,
+                                  color: Colors.white,
+                                  width: 2,
                                 ),
                               ),
                               child: const Icon(
                                 Icons.grass_rounded,
-                                color: AppColors.primary700,
+                                color: Color(0xFF1E3A8A),
                                 size: 32,
                               ),
                             ),
                           ),
                         ),
                         const SizedBox(height: 32),
-
                         const Text(
                           'Choose Your Role',
                           style: TextStyle(
@@ -117,7 +113,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                           'Select how you want to use AgriConnect to tailor your premium experience.',
                           style: TextStyle(
                             fontSize: 16,
-                            color: AppColors.gray500,
+                            color: AppColors.gray600,
                             height: 1.5,
                             fontWeight: FontWeight.w500,
                           ),
@@ -129,7 +125,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                           title: 'I am a Supplier',
                           subtitle: 'Farmers & Growers listing excess produce.',
                           icon: Icons.agriculture_rounded,
-                          color: AppColors.primary700,
+                          color: const Color(0xFF4F46E5),
                           isSelected: selectedRole == 'supplier',
                           onTap: () =>
                               setState(() => selectedRole = 'supplier'),
@@ -139,19 +135,19 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                           title: 'I am a B2B Buyer',
                           subtitle: 'Factories & Mills posting bulk demands.',
                           icon: Icons.factory_rounded,
-                          color: const Color(0xFFF59E0B), // Amber
+                          color: const Color(0xFFF59E0B),
                           isSelected: selectedRole == 'buyer',
                           onTap: () => setState(() => selectedRole = 'buyer'),
                         ),
                         const SizedBox(height: 16),
                         _GlassyRoleCard(
                           title: 'Logistics Partner',
-                          subtitle: 'Provide transport. (Phase 2 Feature)',
+                          subtitle: 'Provide transport and fleet tracking.',
                           icon: Icons.local_shipping_rounded,
-                          color: AppColors.gray400,
-                          isSelected: false,
-                          isComingSoon: true,
-                          onTap: () {}, // Disabled
+                          color: const Color(0xFF10B981),
+                          isSelected: selectedRole == 'transporter',
+                          onTap: () =>
+                              setState(() => selectedRole = 'transporter'),
                         ),
 
                         const Spacer(),
@@ -167,11 +163,9 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                             boxShadow: selectedRole != null
                                 ? [
                                     BoxShadow(
-                                      color:
-                                          (selectedRole == 'supplier'
-                                                  ? AppColors.primary700
-                                                  : const Color(0xFFF59E0B))
-                                              .withValues(alpha: 0.3),
+                                      color: _getRoleColor(
+                                        selectedRole,
+                                      ).withValues(alpha: 0.3),
                                       blurRadius: 24,
                                       offset: const Offset(0, 8),
                                     ),
@@ -183,20 +177,19 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                                 ? null
                                 : () {
                                     HapticFeedback.mediumImpact();
+                                    // 🔥 SENIOR FIX: Passing the selected role to RegisterScreen!
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) =>
-                                            const RegisterScreen(),
+                                            RegisterScreen(role: selectedRole!),
                                       ),
                                     );
                                   },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: selectedRole == 'supplier'
-                                  ? AppColors.primary700
-                                  : (selectedRole == 'buyer'
-                                        ? const Color(0xFFF59E0B)
-                                        : AppColors.gray300),
+                              backgroundColor: selectedRole != null
+                                  ? _getRoleColor(selectedRole)
+                                  : AppColors.gray300,
                               disabledBackgroundColor: Colors.white.withValues(
                                 alpha: 0.5,
                               ),
@@ -241,13 +234,20 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
       ),
     );
   }
+
+  Color _getRoleColor(String? role) {
+    if (role == 'supplier') return const Color(0xFF4F46E5);
+    if (role == 'buyer') return const Color(0xFFF59E0B);
+    if (role == 'transporter') return const Color(0xFF10B981);
+    return AppColors.primary700;
+  }
 }
 
 class _GlassyRoleCard extends StatelessWidget {
   final String title, subtitle;
   final IconData icon;
   final Color color;
-  final bool isSelected, isComingSoon;
+  final bool isSelected;
   final VoidCallback onTap;
 
   const _GlassyRoleCard({
@@ -257,7 +257,6 @@ class _GlassyRoleCard extends StatelessWidget {
     required this.color,
     required this.isSelected,
     required this.onTap,
-    this.isComingSoon = false,
   });
 
   @override
@@ -276,13 +275,11 @@ class _GlassyRoleCard extends StatelessWidget {
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: isSelected
-                  ? color.withValues(alpha: 0.08)
-                  : Colors.white.withValues(alpha: 0.6),
+                  ? color.withValues(alpha: 0.05)
+                  : Colors.white.withValues(alpha: 0.8),
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
-                color: isSelected
-                    ? color.withValues(alpha: 0.5)
-                    : Colors.white.withValues(alpha: 0.8),
+                color: isSelected ? color.withValues(alpha: 0.5) : Colors.white,
                 width: isSelected ? 2 : 1.5,
               ),
             ),
@@ -291,66 +288,30 @@ class _GlassyRoleCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: isComingSoon
-                        ? AppColors.gray200
-                        : color.withValues(alpha: 0.1),
+                    color: color.withValues(alpha: 0.15),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
-                    icon,
-                    size: 28,
-                    color: isComingSoon ? AppColors.gray400 : color,
-                  ),
+                  child: Icon(icon, size: 28, color: color),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          Text(
-                            title,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w800,
-                              color: isComingSoon
-                                  ? AppColors.gray400
-                                  : AppColors.gray900,
-                            ),
-                          ),
-                          if (isComingSoon) ...[
-                            const SizedBox(width: 8),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 6,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppColors.gray200,
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: const Text(
-                                'SOON',
-                                style: TextStyle(
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.w800,
-                                  color: AppColors.gray500,
-                                  letterSpacing: 1,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ],
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.gray900,
+                        ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         subtitle,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 13,
-                          color: isComingSoon
-                              ? AppColors.gray400
-                              : AppColors.gray500,
+                          color: AppColors.gray500,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -386,3 +347,7 @@ class _GlassyRoleCard extends StatelessWidget {
     );
   }
 }
+
+
+
+

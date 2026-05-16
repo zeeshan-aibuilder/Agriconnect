@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/theme/app_colors.dart';
-import '../auth/login_screen.dart';
 import '../auth/role_selection_screen.dart';
+import '../dashboard/main_layout.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -20,7 +21,6 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void initState() {
     super.initState();
-
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1500),
@@ -35,15 +35,40 @@ class _SplashScreenState extends State<SplashScreen>
     );
 
     _animationController.forward();
+    _checkLoginStatus();
+  }
 
-    Future.delayed(const Duration(seconds: 3), () {
-      if (mounted) {
+  // 🚀 SENIOR LOGIC: Check Local Storage for Login Status
+  Future<void> _checkLoginStatus() async {
+    // Wait for the animation to finish looking premium (at least 3 seconds)
+    await Future.delayed(const Duration(seconds: 3));
+
+    final prefs = await SharedPreferences.getInstance();
+    final bool isLoggedIn = prefs.getBool('is_logged_in') ?? false;
+    final String savedRole = prefs.getString('user_role') ?? 'supplier';
+
+    if (mounted) {
+      if (isLoggedIn) {
+        // Direct jump to Dashboard if already logged in
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                MainLayout(role: savedRole),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
+            transitionDuration: const Duration(milliseconds: 800),
+          ),
+        );
+      } else {
+        // Go to Role Selection if fresh user
         Navigator.pushReplacement(
           context,
           PageRouteBuilder(
             pageBuilder: (context, animation, secondaryAnimation) =>
                 const RoleSelectionScreen(),
-
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
                   return FadeTransition(opacity: animation, child: child);
@@ -52,7 +77,7 @@ class _SplashScreenState extends State<SplashScreen>
           ),
         );
       }
-    });
+    }
   }
 
   @override
@@ -71,7 +96,6 @@ class _SplashScreenState extends State<SplashScreen>
       backgroundColor: AppColors.bgSecondary,
       body: Stack(
         children: [
-          // Center Animated Logo
           Center(
             child: AnimatedBuilder(
               animation: _animationController,
@@ -87,12 +111,12 @@ class _SplashScreenState extends State<SplashScreen>
                           width: 120,
                           height: 120,
                           decoration: BoxDecoration(
-                            color: AppColors.white,
-                            borderRadius: BorderRadius.circular(30),
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(32),
                             boxShadow: [
                               BoxShadow(
                                 color: AppColors.primary700.withValues(
-                                  alpha: 0.1,
+                                  alpha: 0.15,
                                 ),
                                 blurRadius: 30,
                                 offset: const Offset(0, 10),
@@ -128,14 +152,12 @@ class _SplashScreenState extends State<SplashScreen>
                           ),
                         ),
                       ],
-                    ), // Column ends here
-                  ), // Transform.scale ends here
-                ); // Opacity ends here
+                    ),
+                  ),
+                );
               },
             ),
           ),
-
-          // Bottom Agency Branding (Powered by Adlytix)
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
@@ -158,14 +180,9 @@ class _SplashScreenState extends State<SplashScreen>
                           ),
                         ),
                         const SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              'assets/images/adlytix_logo.png',
-                              height: 28,
-                            ),
-                          ],
+                        Image.asset(
+                          'assets/images/adlytix_logo.png',
+                          height: 28,
                         ),
                       ],
                     ),

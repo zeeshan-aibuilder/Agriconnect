@@ -1,3 +1,6 @@
-2026/05/12-16:35:23.553 2d94 Reusing MANIFEST C:\Users\Zeeshan\OneDrive\Desktop\VScode\agriconnect\agriconnect-backend\.wwebjs_auth\session\Default\Local Storage\leveldb/MANIFEST-000001
-2026/05/12-16:35:23.612 2d94 Recovering log #3
-2026/05/12-16:35:23.634 2d94 Reusing old log C:\Users\Zeeshan\OneDrive\Desktop\VScode\agriconnect\agriconnect-backend\.wwebjs_auth\session\Default\Local Storage\leveldb/000003.log 
+2026/05/16-10:54:09.059 454 Reusing MANIFEST C:\Users\Zeeshan\OneDrive\Desktop\VScode\agriconnect\agriconnect-backend\.wwebjs_auth\session\Default\Local Storage\leveldb/MANIFEST-000001
+2026/05/16-10:54:09.095 454 Recovering log #4
+2026/05/16-10:54:09.104 454 Reusing old log C:\Users\Zeeshan\OneDrive\Desktop\VScode\agriconnect\agriconnect-backend\.wwebjs_auth\session\Default\Local Storage\leveldb/000004.log 
+2026/05/16-10:56:21.730 454 Level-0 table #8: started
+2026/05/16-10:56:22.262 454 Level-0 table #8: 15490 bytes OK
+2026/05/16-10:56:22.537 454 Delete type=0 #4

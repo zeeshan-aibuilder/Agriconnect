@@ -1,77 +1,101 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:agriconnect/core/network/dio_client.dart';
-import 'package:agriconnect/features/auth/data/auth_repository.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+enum AppRole { none, supplier, buyer, transporter, admin }
 
 class AuthState {
+  final bool isAuthenticated;
+  final AppRole currentRole;
+  final String userName;
   final bool isLoading;
-  final String? error;
 
-  const AuthState({this.isLoading = false, this.error});
+  const AuthState({
+    this.isAuthenticated = false,
+    this.currentRole = AppRole.none,
+    this.userName = 'Guest User',
+    this.isLoading = true,
+  });
 
-  AuthState copyWith({bool? isLoading, String? error}) {
-    return AuthState(isLoading: isLoading ?? this.isLoading, error: error);
+  AuthState copyWith({
+    bool? isAuthenticated,
+    AppRole? currentRole,
+    String? userName,
+    bool? isLoading,
+  }) {
+    return AuthState(
+      isAuthenticated: isAuthenticated ?? this.isAuthenticated,
+      currentRole: currentRole ?? this.currentRole,
+      userName: userName ?? this.userName,
+      isLoading: isLoading ?? this.isLoading,
+    );
   }
 }
 
 class AuthNotifier extends Notifier<AuthState> {
-  late final AuthRepository _repository;
+  bool _mounted = true;
 
   @override
   AuthState build() {
-    _repository = AuthRepository(DioClient());
+    _mounted = true;
+    ref.onDispose(() => _mounted = false);
+    Future.microtask(_checkAuthStatus);
     return const AuthState();
   }
 
-  // 1. Send OTP Logic
-  Future<bool> requestOtp(String phoneOrEmail, String method) async {
-    state = state.copyWith(isLoading: true, error: null);
+  Future<void> _checkAuthStatus() async {
     try {
-      final success = await _repository.requestOtp(phoneOrEmail, method);
-      if (!success) {
-        state = state.copyWith(
-          isLoading: false,
-          error: 'Unable to send OTP. Please try again.',
-        );
-        return false;
-      }
-      state = state.copyWith(isLoading: false);
-      return true;
-    } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString().replaceAll('Exception: ', ''),
+      final prefs = await SharedPreferences.getInstance();
+      if (!_mounted) return;
+      final bool isLoggedIn = prefs.getBool('is_logged_in') ?? false;
+      final String savedRole = prefs.getString('user_role') ?? 'none';
+      final String savedName = prefs.getString('user_name') ?? 'Verified User';
+
+      AppRole role = AppRole.values.firstWhere(
+        (e) => e.toString().split('.').last == savedRole,
+        orElse: () => AppRole.none,
       );
-      return false;
+
+      if (!_mounted) return;
+      state = state.copyWith(
+        isAuthenticated: isLoggedIn,
+        currentRole: role,
+        userName: savedName,
+        isLoading: false,
+      );
+    } catch (e) {
+      if (!_mounted) return;
+      state = state.copyWith(isLoading: false);
     }
   }
 
-  // 2. Verify OTP Logic (NAYA ADD KIYA HAI)
-  Future<bool> verifyOtp(String phone, String otp, String role) async {
-    state = state.copyWith(isLoading: true, error: null);
-    try {
-      // Prototype ke liye hum name "User" aur role pass kar rahe hain
-      final response = await _repository.verifyOtp(
-        phone,
-        otp,
-        name: "Premium User",
-        roleId: role,
-      );
+  Future<void> loginUser(AppRole role, String name) async {
+    state = state.copyWith(isLoading: true);
+    await Future.delayed(const Duration(seconds: 1)); // Mock API delay
+    if (!_mounted) return;
 
-      // Yahan se jo Token aayega usko Dio Client mein add kar denge taake aage ki API calls secure hon
-      // DioClient().addToken(response['token']);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('is_logged_in', true);
+    await prefs.setString('user_role', role.toString().split('.').last);
+    await prefs.setString('user_name', name);
 
-      state = state.copyWith(isLoading: false);
-      return true; // Verification Success
-    } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString().replaceAll('Exception: ', ''),
-      );
-      return false; // Verification Failed
-    }
+    if (!_mounted) return;
+    state = state.copyWith(
+      isAuthenticated: true,
+      currentRole: role,
+      userName: name,
+      isLoading: false,
+    );
+  }
+
+  Future<void> logout() async {
+    state = state.copyWith(isLoading: true);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    if (!_mounted) return;
+    state = const AuthState(isLoading: false);
   }
 }
 
-final authStateProvider = NotifierProvider<AuthNotifier, AuthState>(() {
-  return AuthNotifier();
-});
+final authProvider = NotifierProvider<AuthNotifier, AuthState>(
+  AuthNotifier.new,
+);
