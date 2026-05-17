@@ -5,7 +5,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../shared/widgets/app_card.dart';
 import '../../shared/widgets/app_button.dart';
-import 'driver_public_profile.dart'; // Using this as Shipper profile for now
+import 'presentation/screens/driver_public_profile.dart'; // Using this as Shipper profile for now
 
 class LoadDetailScreen extends StatelessWidget {
   final String cargoType;

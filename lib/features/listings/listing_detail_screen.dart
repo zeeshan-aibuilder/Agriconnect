@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
-import '../chat/chat_detail_screen.dart';
+import '../chat/presentation/screens/chat_detail_screen.dart';
 
 const Color _bgDark = Color(0xFF0F172A);
 const Color _cardDark = Color(0xFF1E293B);

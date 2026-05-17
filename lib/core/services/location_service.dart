@@ -2,7 +2,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class LocationService {
-  /// Checks and requests GPS permissions
   Future<bool> handleLocationPermission() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) return false;
@@ -18,29 +17,29 @@ class LocationService {
     return true;
   }
 
-  /// Returns a stream of high-accuracy location updates
   Stream<Position> getPositionStream() {
     return Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
         accuracy: LocationAccuracy.high,
-        distanceFilter: 10, // Updates when driver moves 10 meters
+        distanceFilter: 10,
       ),
     );
   }
 
-  /// Launches Native Google Maps
-  Future<void> openGoogleMaps(double lat, double lng) async {
-    // Standard Google Maps navigation URL
-    final Uri googleMapsUrl = Uri.parse(
-      'https://www.google.com/maps/dir/?api=1&destination=$lat,$lng',
-    );
+  Future<void> openGoogleMapsDirections(
+    double originLat,
+    double originLng,
+    double destLat,
+    double destLng,
+  ) async {
+    final String url =
+        'https://www.google.com/maps/dir/?api=1&origin=$originLat,$originLng&destination=$destLat,$destLng&travelmode=driving';
+    final Uri uri = Uri.parse(url);
 
-    if (await canLaunchUrl(googleMapsUrl)) {
-      await launchUrl(googleMapsUrl, mode: LaunchMode.externalApplication);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else {
-      throw Exception(
-        'Could not launch Google Maps. Please ensure it is installed.',
-      );
+      throw Exception('Could not launch Google Maps.');
     }
   }
 }

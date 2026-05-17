@@ -1,95 +1,67 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import '../../core/theme/app_colors.dart';
-import '../../core/theme/app_text_styles.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_text_styles.dart';
 
-class SettingsScreen extends StatefulWidget {
-  final String role; // 🔥 ROLE ADDED
+// Assuming you have an AuthProvider. If not, just mock the role check for now.
+// import '../../../auth/presentation/providers/auth_provider.dart';
+
+class SettingsScreen extends ConsumerStatefulWidget {
+  final String role; // 'transporter' or 'buyer'
   const SettingsScreen({super.key, required this.role});
 
   @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
+  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen> {
-  bool _isUrdu = false;
+class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _notifications = true;
+  bool _twoFactorAuth = false;
 
-  final Map<String, String> _eng = {
-    'settings': 'Settings',
-    'account': 'Account',
-    'privacy': 'Privacy & Security',
-    'lang': 'Language',
-    'help': 'Help Center',
-    'logout': 'Log Out',
-    'support': 'Contact Support',
-    'prefs': 'Preferences',
-    'edit_prof': 'Edit Profile Details',
-  };
-
-  final Map<String, String> _urdu = {
-    'settings': 'ترتیبات',
-    'account': 'اکاؤنٹ',
-    'privacy': 'پرائیویسی اور سیکیورٹی',
-    'lang': 'زبان تبدیل کریں',
-    'help': 'مدد کا مرکز',
-    'logout': 'لاگ آؤٹ',
-    'support': 'رابطہ کریں',
-    'prefs': 'ترجیحات',
-    'edit_prof': 'پروفائل میں ترمیم کریں',
-  };
-
-  String t(String key) => _isUrdu ? (_urdu[key] ?? key) : (_eng[key] ?? key);
-
-  void _showLanguageSheet() {
-    showModalBottomSheet(
+  void _showLogoutDialog() {
+    showDialog(
       context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (context) => Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Select Language', style: AppTextStyles.h3),
-            const SizedBox(height: 16),
-            ListTile(
-              title: const Text(
-                'English',
-                style: TextStyle(fontWeight: FontWeight.w700),
-              ),
-              trailing: !_isUrdu
-                  ? const Icon(
-                      Icons.check_circle_rounded,
-                      color: AppColors.success500,
-                    )
-                  : null,
-              onTap: () {
-                setState(() => _isUrdu = false);
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: const Text(
-                'اردو',
-                style: TextStyle(fontWeight: FontWeight.w700),
-              ),
-              trailing: _isUrdu
-                  ? const Icon(
-                      Icons.check_circle_rounded,
-                      color: AppColors.success500,
-                    )
-                  : null,
-              onTap: () {
-                setState(() => _isUrdu = true);
-                Navigator.pop(context);
-              },
-            ),
-          ],
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: const Text(
+          'Logout',
+          style: TextStyle(fontWeight: FontWeight.w800),
         ),
+        content: const Text(
+          'Are you sure you want to logout? You will need to verify your phone number again to log in.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(
+                color: AppColors.gray500,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              /* Handle Logout */
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.error500,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: const Text(
+              'Logout',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -101,7 +73,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Scaffold(
       backgroundColor: AppColors.bgSecondary,
       appBar: AppBar(
-        title: Text(t('settings'), style: AppTextStyles.h3),
+        title: Text('Settings', style: AppTextStyles.h3),
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
@@ -117,7 +89,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         physics: const BouncingScrollPhysics(),
         padding: const EdgeInsets.all(24),
         children: [
-          // Dynamic User Profile Card
+          // --- PROFILE HEADER ---
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
@@ -149,19 +121,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        isDriver ? 'Driver Profile' : 'Business Profile',
-                        style: const TextStyle(
+                      const Text(
+                        'Verified User',
+                        style: TextStyle(
                           color: Colors.white,
-                          fontSize: 18,
+                          fontSize: 20,
                           fontWeight: FontWeight.w800,
                         ),
                       ),
                       Text(
-                        '+92 300 1234567',
+                        isDriver ? 'Transporter Profile' : 'Buyer Profile',
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.8),
-                          fontSize: 13,
+                          color: Colors.white.withValues(alpha: 0.9),
+                          fontSize: 14,
                         ),
                       ),
                     ],
@@ -172,69 +144,71 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           const SizedBox(height: 32),
 
-          Text(
-            t('account').toUpperCase(),
-            style: AppTextStyles.caption.copyWith(
-              letterSpacing: 1.5,
-              fontWeight: FontWeight.w800,
+          // --- ACCOUNT SECTION ---
+          _buildSectionHeader('ACCOUNT'),
+          _buildCard([
+            _buildTile(
+              Icons.person_rounded,
+              Colors.blue,
+              'Edit Profile Details',
             ),
-          ),
-          const SizedBox(height: 12),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: AppColors.gray200),
+            const Divider(height: 1, color: AppColors.gray200),
+            _buildTile(
+              Icons.phone_iphone_rounded,
+              Colors.teal,
+              'Update Phone Number',
             ),
-            child: Column(
-              children: [
-                _buildTile(
-                  Icons.edit_document,
-                  Colors.blue,
-                  t('edit_prof'),
-                  () {},
-                ),
-                const Divider(height: 1, color: AppColors.gray200),
-                _buildTile(
-                  Icons.language_rounded,
-                  Colors.orange,
-                  t('lang'),
-                  _showLanguageSheet,
-                ),
-              ],
-            ),
-          ),
+          ]),
           const SizedBox(height: 24),
 
-          Text(
-            t('prefs').toUpperCase(),
-            style: AppTextStyles.caption.copyWith(
-              letterSpacing: 1.5,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: AppColors.gray200),
-            ),
-            child: ListTile(
-              leading: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.red.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Icon(
-                  Icons.notifications_active_rounded,
-                  color: Colors.red,
-                  size: 20,
-                ),
+          // --- ROLE SPECIFIC SETTINGS ---
+          if (isDriver) ...[
+            _buildSectionHeader('DRIVER SETTINGS'),
+            _buildCard([
+              _buildTile(
+                Icons.local_shipping_rounded,
+                AppColors.primary700,
+                'Vehicle Management',
               ),
+              const Divider(height: 1, color: AppColors.gray200),
+              _buildTile(
+                Icons.description_rounded,
+                Colors.indigo,
+                'Document Verification',
+              ),
+              const Divider(height: 1, color: AppColors.gray200),
+              _buildTile(
+                Icons.account_balance_rounded,
+                Colors.green,
+                'Bank & Payouts',
+              ),
+            ]),
+            const SizedBox(height: 24),
+          ] else ...[
+            _buildSectionHeader('BUYER SETTINGS'),
+            _buildCard([
+              _buildTile(
+                Icons.location_on_rounded,
+                AppColors.primary700,
+                'Saved Addresses',
+              ),
+              const Divider(height: 1, color: AppColors.gray200),
+              _buildTile(
+                Icons.payment_rounded,
+                Colors.indigo,
+                'Payment Methods',
+              ),
+            ]),
+            const SizedBox(height: 24),
+          ],
+
+          // --- PREFERENCES & SECURITY ---
+          _buildSectionHeader('SECURITY & PREFERENCES'),
+          _buildCard([
+            ListTile(
+              leading: _iconBox(Icons.notifications_active_rounded, Colors.red),
               title: Text(
-                'Notifications',
+                'Push Notifications',
                 style: AppTextStyles.bodyMedium.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
@@ -245,17 +219,70 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onChanged: (val) => setState(() => _notifications = val),
               ),
             ),
-          ),
+            const Divider(height: 1, color: AppColors.gray200),
+            ListTile(
+              leading: _iconBox(Icons.security_rounded, Colors.orange),
+              title: Text(
+                'Two-Factor Auth (2FA)',
+                style: AppTextStyles.bodyMedium.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              trailing: CupertinoSwitch(
+                value: _twoFactorAuth,
+                activeTrackColor: AppColors.primary700,
+                onChanged: (val) => setState(() => _twoFactorAuth = val),
+              ),
+            ),
+            const Divider(height: 1, color: AppColors.gray200),
+            _buildTile(
+              Icons.password_rounded,
+              Colors.blueGrey,
+              'Change Password',
+            ),
+          ]),
+          const SizedBox(height: 24),
+
+          // --- DATA CONTROL (Danger Zone) ---
+          _buildSectionHeader('DATA CONTROL'),
+          _buildCard([
+            _buildTile(
+              Icons.download_rounded,
+              Colors.purple,
+              'Request Account Data',
+            ),
+            const Divider(height: 1, color: AppColors.gray200),
+            ListTile(
+              leading: _iconBox(
+                Icons.delete_forever_rounded,
+                AppColors.error500,
+              ),
+              title: Text(
+                'Delete Account',
+                style: AppTextStyles.bodyMedium.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.error500,
+                ),
+              ),
+              trailing: const Icon(
+                Icons.arrow_forward_ios_rounded,
+                size: 16,
+                color: AppColors.error500,
+              ),
+              onTap: () {},
+            ),
+          ]),
           const SizedBox(height: 40),
 
+          // --- LOGOUT BUTTON ---
           SizedBox(
             width: double.infinity,
             height: 56,
             child: OutlinedButton.icon(
-              onPressed: () {},
+              onPressed: _showLogoutDialog,
               icon: const Icon(Icons.logout_rounded, color: AppColors.error500),
               label: Text(
-                t('logout'),
+                'Log Out',
                 style: AppTextStyles.bodyMedium.copyWith(
                   color: AppColors.error500,
                   fontWeight: FontWeight.w800,
@@ -269,27 +296,57 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
           ),
+          const SizedBox(height: 40),
         ],
       ),
+    );
+  }
+
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Text(
+        title,
+        style: AppTextStyles.caption.copyWith(
+          letterSpacing: 1.5,
+          fontWeight: FontWeight.w800,
+          color: AppColors.gray500,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCard(List<Widget> children) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.gray200),
+      ),
+      child: Column(children: children),
+    );
+  }
+
+  Widget _iconBox(IconData icon, Color color) {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Icon(icon, color: color, size: 20),
     );
   }
 
   Widget _buildTile(
     IconData icon,
     Color color,
-    String title,
-    VoidCallback onTap,
-  ) {
+    String title, [
+    VoidCallback? onTap,
+  ]) {
     return ListTile(
       onTap: onTap,
-      leading: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Icon(icon, color: color, size: 20),
-      ),
+      leading: _iconBox(icon, color),
       title: Text(
         title,
         style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),

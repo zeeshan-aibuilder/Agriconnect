@@ -672,8 +672,7 @@ class _MarketScreenState extends State<MarketScreen> {
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                                                color: _primaryGreen.withValues(alpha: 0.3),
-                              color: Colors.black.withValues(alpha: 0.04),
+                              color: _primaryGreen.withValues(alpha: 0.3),
                               blurRadius: 20,
                               offset: const Offset(0, 10),
                             ),
